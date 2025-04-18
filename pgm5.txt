@@ -1,0 +1,28 @@
+import numpy as np
+from scipy.spatial import distance
+from collections import import Counter
+
+np.random.seed(42)
+data_points = np.random.rand(100)
+print(data_points)
+
+labels = np.array(['Class1' if x<=0.5 else 'Class2' for x in data_points[:50]])
+print(labels)
+
+def knn_classify(train_points, train_labels, test_point, k):
+    distances = [distance.euclidean([test_point], [x]) for x in train_points]
+    k_nearest_indices = np.argsort(distances)[:k]
+    k_nearest_labels = [train_labels[i] for i in k_nearest_indices]
+    most_common_label = Counter(k_nearest_labels).most_common(1)[0][0]
+    return most_common_label
+
+test_points = data_points[50:]
+train_points = data_points[:50]
+
+k_values = [1, 2, 3, 4, 5, 20, 30]
+
+for k in k_values:
+    predictions = [knn_classify(train_points, labels, test_point, k) for test_point in test_points]
+    print(f"\nResults for k={k}:")
+    for i, (point, prediction) in enumerate(zip(test_points, predictions), start=51):
+        print(f"x{i}({point:.3f})->{prediction}")
