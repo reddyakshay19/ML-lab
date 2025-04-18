@@ -1,0 +1,38 @@
+import pandas as pd
+import numpy as np
+
+# Load the data
+data = pd.read_csv("C:\\Users\\aksha\\Downloads\\training_data.csv")
+print("Training Data")
+print(data)
+
+# Extract concepts (features) and target (labels)
+concepts = np.array(data)[:, :-1]
+target = np.array(data)[:, -1]
+
+# Train function
+def train(con, tar):
+    specific_h = None
+
+    # Find the first positive example ('Yes') and initialize specific_h
+    for i, val in enumerate(tar):
+        if val == 'Yes':
+            specific_h = con[i].copy()
+            break
+
+    # Raise an error if no positive example is found
+    if specific_h is None:
+        raise ValueError("No positive example ('Yes') found in target")
+
+    # Iterate through all examples to refine specific_h
+    for i, val in enumerate(tar):
+        if val == 'Yes':
+            for x in range(len(specific_h)):
+                if specific_h[x] != con[i][x]:
+                    specific_h[x] = '?'
+
+    return specific_h
+
+# Train and display the final hypothesis
+final_hypothesis = train(concepts, target)
+print("Final Hypothesis:", final_hypothesis)
